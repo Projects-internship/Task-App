@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Aplicație cu buton</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Apasă butonul!</h1>
+  <button id="myButton">Apasă</button>
+
+  <script>
+    document.getElementById('myButton').addEventListener('click', () => {
+      fetch('/button', {
+        method: 'POST'
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data);
+        // Actualizează interfața utilizatorului după caz
+      })
+      .catch(error => {
+        console.error('Eroare:', error);
+      });
+    });
+  </script>
+</body>
+</html>
