@@ -1,0 +1,22 @@
+.gradient-bg {
+  position: relative;
+  overflow: hidden;
+  background-image: url(images/gradient-bg.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: 50% 12%;
+  animation: Anim 1.5s ease-out;
+}
+
+@keyframes Anim {
+  from {
+    background-size: 200%;
+    opacity: 0.1;
+  } 
+  to {
+    background-size: 100%;
+    opacity: 1;
+  }
+}
+
+

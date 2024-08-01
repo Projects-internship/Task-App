@@ -20,6 +20,18 @@ server.get('/test', (request, reply) => {
     reply.send({ message: 'eroare' });
   })
 });
+server.get('/users', async (request, reply) => {
+  try {
+    const results = await postgresConnector.execQuery("select * from users", [])
+    reply.send({users:results})
+    
+  } catch (error) {
+    console.log(error)
+    reply.send({error})
+  }
+  
+});
+
 
 // Ruta POST pentru /test  
 server.post('/test', (request, reply) => {
