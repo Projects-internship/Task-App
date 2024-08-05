@@ -82,7 +82,7 @@ const main = async () => {
   await deleteUser(1); // Înlocuiește cu ID-ul utilizatorului pe care vrei să-l ștergi
 };
 
-main();
+// main();
 
 module.exports = { execQuery, selectUsers, insertUser, deleteUser };
 const checkConnection = async () => {
@@ -109,4 +109,8 @@ module.exports = {
   connectToDatabase,
   checkConnection,
   disconnectFromDatabase,
+  selectUsers,
+  deleteUser,
+  insertUser,
+  execQuery
 };
