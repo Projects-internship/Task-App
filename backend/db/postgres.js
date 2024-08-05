@@ -23,13 +23,14 @@ const connectToDatabase = async () => {
 const execQuery = async (query, params) => {
   const client = await pool.connect();
   try {
-    const res = await client.query(query, params);
-    return res;
-  } catch (err) {
-    console.error('Eroare la executarea interogării:', err);
-    throw err;
+      console.log('Executând interogarea:', query, 'cu parametrii:', params);
+      const result = await client.query(query, params);
+      return result.rows;
+  } catch (error) {
+      console.error('Eroare la execuția interogării:', error);
+      throw error;
   } finally {
-    client.release();
+      client.release();
   }
 };
 

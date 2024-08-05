@@ -22,14 +22,23 @@ server.get('/test', (request, reply) => {
 });
 server.get('/users', async (request, reply) => {
   try {
-    const results = await postgresConnector.execQuery("select * from users", [])
-    reply.send({users:results})
-    
+      console.log('Cerere primită la /users');
+      const results = await postgresConnector.execQuery("SELECT * FROM users;");
+      console.log('Utilizatori obținuți:', results);
+      reply.send({ users: results });
   } catch (error) {
-    console.log(error)
-    reply.send({error})
+      console.error('Eroare la obținerea utilizatorilor:', error);
+      reply.send({ error: 'Eroare la obținerea utilizatorilor' });
   }
-  
+});
+server.get('/test-db', async (request, reply) => {
+  try {
+      const result = await postgresConnector.execQuery('SELECT NOW()'); // Testează conexiunea
+      reply.send({ time: result[0].now });
+  } catch (error) {
+      console.error('Eroare la conexiunea cu baza de date:', error);
+      reply.send({ error: 'Eroare la conexiunea cu baza de date' });
+  }
 });
 
 
