@@ -31,6 +31,46 @@ server.get('/users', async (request, reply) => {
       reply.send({ error: 'Eroare la obținerea utilizatorilor' });
   }
 });
+
+// Ruta pentru roluri
+server.get('/roles', async (request, reply) => {
+  try {
+    console.log('Cerere primită la /roles');
+    const results = await postgresConnector.execQuery("SELECT * FROM roles;");
+    console.log('Roluri obținute:', results);
+    reply.send({ roles: results });
+  } catch (error) {
+    console.error('Eroare la obținerea rolurilor:', error);
+    reply.send({ error: 'Eroare la obținerea rolurilor' });
+  }
+});
+
+// Ruta pentru task-uri
+server.get('/tasks', async (request, reply) => {
+  try {
+    console.log('Cerere primită la /tasks');
+    const results = await postgresConnector.execQuery("SELECT * FROM tasks;");
+    console.log('Task-uri obținute:', results);
+    reply.send({ tasks: results });
+  } catch (error) {
+    console.error('Eroare la obținerea task-urilor:', error);
+    reply.send({ error: 'Eroare la obținerea task-urilor' });
+  }
+});
+
+// Ruta pentru log-uri
+server.get('/logs', async (request, reply) => {
+  try {
+    console.log('Cerere primită la /logs');
+    const results = await postgresConnector.execQuery("SELECT * FROM logs;");
+    console.log('Log-uri obținute:', results);
+    reply.send({ logs: results });
+  } catch (error) {
+    console.error('Eroare la obținerea log-urilor:', error);
+    reply.send({ error: 'Eroare la obținerea log-urilor' });
+  }
+});
+
 server.get('/test-db', async (request, reply) => {
   try {
       const result = await postgresConnector.execQuery('SELECT NOW()'); // Testează conexiunea
