@@ -12,6 +12,34 @@ server.register(fastifyStatic, {
   prefix: '/', //prefix URL
 });
 
+server.post('/create-user', async (request, reply) => {
+  const { username, password, email, role } = request.body;
+
+  // Validarea datelor de intrare
+  if (!username || !password || !email || role === undefined) {
+    return reply.status(400).send({ error: 'All fields are required' });
+  }
+
+  try {
+    // Verifică dacă utilizatorul există deja
+    const checkQuery = 'SELECT * FROM users WHERE username = $1 OR email = $2';
+    const existingUser = await postgresConnector.execQuery(checkQuery, [username, email]);
+
+    if (existingUser.length > 0) {
+      return reply.status(400).send({ error: 'Username or email already exists' });
+    }
+
+    // Hash-urarea parolei
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const query = 'INSERT INTO users (username, password, email, role) VALUES ($1, $2, $3, $4)';
+    await postgresConnector.execQuery(query, [username, hashedPassword, email, role]);
+    reply.send({ message: 'User created successfully' });
+  } catch (error) {
+    console.error('Error creating user:', error); // Logare detaliată
+    reply.status(500).send({ error: error.message || 'Error creating user' });
+  }
+});
+
 // Ruta GET pentru /test
 server.get('/test', (request, reply) => {
   postgresConnector.connectToDatabase().then((msg)=>{
