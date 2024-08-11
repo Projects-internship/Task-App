@@ -1,8 +1,8 @@
+import React, { useReducer } from 'react';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
 import Fade from '@mui/material/Fade';
 import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
-import { useReducer } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import AppHeader from 'components/AppHeader';
@@ -10,6 +10,7 @@ import NavigationBar from 'components/NavigationBar';
 import Sidebar from 'components/Sidebar';
 import { DRAWER_WIDTH } from 'constant';
 
+// Mixin pentru drawer deschis
 const openedMixin = (theme: Theme): CSSObject => ({
   width: DRAWER_WIDTH,
   transition: theme.transitions.create('width', {
@@ -19,6 +20,7 @@ const openedMixin = (theme: Theme): CSSObject => ({
   overflowX: 'hidden',
 });
 
+// Mixin pentru drawer închis
 const closedMixin = (theme: Theme): CSSObject => ({
   transition: theme.transitions.create('width', {
     easing: theme.transitions.easing.sharp,
@@ -28,15 +30,16 @@ const closedMixin = (theme: Theme): CSSObject => ({
   width: `calc(${theme.spacing(12.5)} + 1px)`,
 });
 
+// Header pentru drawer
 const DrawerHeader = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'flex-end',
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));
 
+// Componenta Drawer
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
     width: DRAWER_WIDTH,
@@ -54,13 +57,14 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-export default function MainLayout() {
+// Componenta principală
+const MainLayout: React.FC = () => {
   const theme = useTheme();
-  const [open, setOpen] = useReducer((state) => !state, false);
+  const [open, setOpen] = useReducer((state) => !state, false); // Toggle pentru drawer
 
   return (
     <Box display='flex'>
-      <AppHeader {...{ open, setOpen }} />
+      <AppHeader open={open} setOpen={setOpen} />
       <Drawer variant='permanent' open={open}>
         <Box component='aside' display='flex' p={2} minHeight='100%'>
           <NavigationBar />
@@ -83,8 +87,10 @@ export default function MainLayout() {
         sx={{ flexGrow: 1, minHeight: '100vh', p: 2, bgcolor: theme.palette.background.default }}
       >
         <DrawerHeader />
-        <Outlet />
+        <Outlet /> {/* Aici se va reda conținutul paginii principale */}
       </Box>
     </Box>
   );
-}
+};
+
+export default MainLayout;

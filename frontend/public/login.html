@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ro">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .container {
+        background-color: white;
+        padding: 40px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+      }
+
+      .form-container {
+        flex: 1;
+        margin-right: 40px;
+      }
+
+      .image-container {
+        flex: 1;
+        background-image: url('https://camo.githubusercontent.com/f31e012019ccc953e628be5d7397b829845acb7ac4033a046140fd8ce00377e7/68747470733a2f2f6d64626f6f7473747261702e636f6d2f696d672f4d61726b6574696e672f6769746875622f6c6f67696e2f62617369632e706e67');
+        background-size: cover;
+        background-position: center;
+        border-radius: 5px;
+      }
+
+      h1 {
+        color: #8e44ad;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      input[type='text'],
+      input[type='password'] {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+
+      button {
+        background-color: #8e44ad;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        width: 100%;
+      }
+
+      button:hover {
+        background-color: #6c3483;
+      }
+
+      .error-message {
+        color: red;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="form-container">
+        <h1>Login</h1>
+        <form id="login-form">
+          <label for="username">Username:</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Introduceți username-ul"
+            required
+          />
+
+          <label for="password">Parolă:</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Introduceți parola"
+            required
+          />
+
+          <button type="submit">Login</button>
+          <div class="error-message" id="error-message"></div>
+        </form>
+      </div>
+      <div class="image-container"></div>
+    </div>
+
+    <script>
+      const form = document.getElementById('login-form');
+      const errorMessage = document.getElementById('error-message');
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        try {
+          // Construiește URL-ul cu query parameters
+          const response = await fetch(
+            `/login?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`,
+            {
+              method: 'GET', // Folosește GET
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            },
+          );
+
+          if (response.ok) {
+            // Redirecționează către pagina principală
+            window.location.href = 'http://localhost:3000/'; // Redirecționează către pagina principală
+          } else {
+            // Afișează un mesaj de eroare
+            const errorData = await response.json();
+            errorMessage.textContent = errorData.error || 'Username sau parolă invalidă';
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          errorMessage.textContent =
+            'A apărut o eroare la conectare. Vă rugăm să încercați din nou.';
+        }
+      });
+    </script>
+  </body>
+</html>

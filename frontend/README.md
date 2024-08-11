@@ -3,13 +3,13 @@
 <img width="1440" alt="Screenshot 2023-03-29 at 13 51 30" src="https://user-images.githubusercontent.com/26411546/228517381-f746b6ef-5f16-4e46-b704-e172dcebcfb2.png">
 
 ## Built with:
+
 - React
-- Typescript 
+- Typescript
 - [Zustand](https://github.com/pmndrs/zustand)
 - [MUI](https://mui.com/)
 - [React Beautiful Dnd](https://github.com/atlassian/react-beautiful-dnd)
 - [Faker.js](https://fakerjs.dev/)
-
 
 ## Available Scripts
 

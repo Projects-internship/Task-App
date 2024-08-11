@@ -12,15 +12,11 @@ function App() {
     <BrowserRouter>
       <ThemeProvider theme={theme}>
         <div className='App'>
-          <h1>Bine ai venit la aplicația mea React!</h1>
-
-          <UserTable /> {/* Adaugă UserTable */}
-
-          <AppRoutes /> {/* Rutele aplicației */}
+          <UserTable />
+          <AppRoutes />
         </div>
       </ThemeProvider>
     </BrowserRouter>
   );
 }
-
 export default App;

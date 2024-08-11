@@ -12,11 +12,9 @@
   from {
     background-size: 200%;
     opacity: 0.1;
-  } 
+  }
   to {
     background-size: 100%;
     opacity: 1;
   }
 }
-
-
