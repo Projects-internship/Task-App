@@ -13,6 +13,11 @@ server.register(fastifyStatic, {
   prefix: '/', //prefix URL
 });
 
+// Ruta principală care servește pagina de login
+server.get('/', (request, reply) => {
+  reply.sendFile('login.html'); // Asigură-te că login.html se află în directorul frontend
+});
+
 // Ruta pentru crearea utilizatorului
 server.post('/create-user', async (request, reply) => {
   const { username, password, email, role } = request.body;
@@ -95,24 +100,112 @@ server.delete('/user', async (request, reply) => {
   }
 });
 
+// Endpoint pentru inserarea unui task
+server.post('/tasks', async (request, reply) => {
+    const { user_id, assigned_to, titlu, continut, deadline, coordonate } = request.body;
+
+    if (!user_id || !assigned_to || !titlu) {
+        return reply.status(400).send({ error: 'user_id, assigned_to, and titlu are required' });
+    }
+
+    try {
+        const query = `
+            INSERT INTO tasks (user_id, assigned_to, titlu, continut, deadline, coordonate)
+            VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`;
+        const result = await postgresConnector.execQuery(query, [user_id, assigned_to, titlu, continut, deadline, coordonate]);
+        reply.status(201).send(result[0]); // Răspunde cu task-ul creat
+    } catch (error) {
+        console.error('Error creating task:', error);
+        reply.status(500).send({ error: 'Error creating task' });
+    }
+});
+
+// Endpoint pentru inserarea unui task
+server.post('/addtasks', async (request, reply) => {
+    const { user_id, assigned_to, titlu, continut, deadline, coordonate } = request.body;
+
+    if (!user_id || !assigned_to || !titlu) {
+        return reply.status(400).send({ error: 'user_id, assigned_to, and titlu are required' });
+    }
+
+    try {
+        const query = `
+            INSERT INTO tasks (user_id, assigned_to, titlu, continut, deadline, coordonate)
+            VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`;
+        const result = await postgresConnector.execQuery(query, [user_id, assigned_to, titlu, continut, deadline, coordonate]);
+        reply.status(201).send(result[0]); // Răspunde cu task-ul creat
+    } catch (error) {
+        console.error('Error creating task:', error);
+        reply.status(500).send({ error: 'Error creating task' });
+    }
+});
+
+
+
+// Endpoint pentru ștergerea unui task
+server.delete('/tasks/:id', async (request, reply) => {
+    const { id } = request.params;
+
+    try {
+        const query = 'DELETE FROM tasks WHERE id = $1 RETURNING *';
+        const result = await postgresConnector.execQuery(query, [id]);
+
+        if (result.rowCount === 0) {
+            return reply.status(404).send({ error: 'Task not found' });
+        }
+
+        reply.send({ message: 'Task deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting task:', error);
+        reply.status(500).send({ error: 'Error deleting task' });
+    }
+});
+
+// Endpoint pentru actualizarea unui task
+server.put('/tasks/:id', async (request, reply) => {
+    const { id } = request.params;
+    const { assigned_to, titlu, continut, deadline, coordonate } = request.body;
+
+    try {
+        const query = `
+            UPDATE tasks
+            SET assigned_to = COALESCE($1, assigned_to),
+                titlu = COALESCE($2, titlu),
+                continut = COALESCE($3, continut),
+                deadline = COALESCE($4, deadline),
+                coordonate = COALESCE($5, coordonate)
+            WHERE id = $6 RETURNING *`;
+        const result = await postgresConnector.execQuery(query, [assigned_to, titlu, continut, deadline, coordonate, id]);
+
+        if (result.rowCount === 0) {
+            return reply.status(404).send({ error: 'Task not found' });
+        }
+
+        reply.send(result[0]); // Răspunde cu task-ul actualizat
+    } catch (error) {
+        console.error('Error updating task:', error);
+        reply.status(500).send({ error: 'Error updating task' });
+    }
+});
+
 // Ruta GET pentru /test
 server.get('/test', (request, reply) => {
-  postgresConnector.connectToDatabase().then((msg) => {
+  postgresConnector.connectToDatabase().then((msg)=>{
     reply.send({ message: msg });
-  }).catch(() => {
+  }).catch(()=>{
     reply.send({ message: 'eroare' });
-  });
+  })
 });
 
 server.get('/users', async (request, reply) => {
   try {
-    console.log('Cerere primită la /users');
-    const results = await postgresConnector.execQuery("SELECT * FROM users;");
-    console.log('Utilizatori obținuți:', results);
-    reply.send({ users: results });
+      console.log('Cerere primită la /users');
+      const results = await postgresConnector.execQuery("SELECT * FROM users;");
+      console.log('Utilizatori obținuți:', results);
+      reply.send({ users: results });
   } catch (error) {
-    console.error('Eroare la obținerea utilizatorilor:', error);
-    reply.send({ error: 'Eroare la obținerea utilizatorilor' });
+      console.error('Eroare la obținerea utilizatorilor:', error);
+      reply.send({ error: 'Eroare la obținerea utilizatorilor' });
   }
 });
 
@@ -157,32 +250,37 @@ server.get('/logs', async (request, reply) => {
 
 server.get('/test-db', async (request, reply) => {
   try {
-    const result = await postgresConnector.execQuery('SELECT NOW()'); // Testează conexiunea
-    reply.send({ time: result[0].now });
+      const result = await postgresConnector.execQuery('SELECT NOW()'); // Testează conexiunea
+      reply.send({ time: result[0].now });
   } catch (error) {
-    console.error('Eroare la conexiunea cu baza de date:', error);
-    reply.send({ error: 'Eroare la conexiunea cu baza de date' });
+      console.error('Eroare la conexiunea cu baza de date:', error);
+      reply.send({ error: 'Eroare la conexiunea cu baza de date' });
   }
 });
 
+
 // Ruta POST pentru /test  
 server.post('/test', (request, reply) => {
+
   reply.send({ message: 'OK' });
 });
 
 // Ruta PUT pentru /test
 server.put('/test', (request, reply) => {
+
   reply.send({ message: 'OK' });
 });
 
 // Ruta DELETE pentru /test
 server.delete('/test', (request, reply) => {
+
   reply.send({ message: 'OK' });
 });
 
 // Ruta pentru buton (POST /button)
 server.post('/button', (request, reply) => {
-  reply.send({ message: "Buton apasat" });
+
+  reply.send({ message: "Buton apasat" })
 });
 
 server.listen({ port: 3001 }, (err) => {
