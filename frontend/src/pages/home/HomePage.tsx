@@ -5,21 +5,27 @@ import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 
 import HeroProject from 'components/HeroProject';
+import TaskTable from 'components/TaskTable';
+import UserTable from 'components/UserTable';
 
 const HomePage = () => {
   return (
     <Container disableGutters>
-      <HeroProject />
-      <Divider sx={{ mt: 4 }} />
-      <Box display='flex' alignItems='center' justifyContent='space-between' mt={2} mb={2}>
-        <Box>
-          <Button variant='text' color='inherit' startIcon={<TuneIcon />}>
-            {/* No text inside button */}
-          </Button>
+      <Box
+        display='flex'
+        flexDirection='column'
+        alignItems='center'
+        justifyContent='center'
+        mt={2}
+        mb={2}
+      >
+        <UserTable />
+        <Box mt={2} mb={2}>
+          <Divider />
         </Box>
+        <TaskTable />
       </Box>
       <Divider />
-      {/* Removed KanbanBoard */}
     </Container>
   );
 };

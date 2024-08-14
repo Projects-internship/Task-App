@@ -1,8 +1,8 @@
-import React, { useReducer } from 'react';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
 import Fade from '@mui/material/Fade';
 import { styled, useTheme, Theme, CSSObject } from '@mui/material/styles';
+import React, { useReducer } from 'react';
 import { Outlet } from 'react-router-dom';
 
 import AppHeader from 'components/AppHeader';
