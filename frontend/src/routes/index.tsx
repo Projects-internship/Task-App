@@ -15,6 +15,7 @@ const AppRoutes = () => {
         {/* Pagina principală */}
         <Route index element={<HomePage />} /> {/* Pagina principală */}
         <Route path='users' element={<UserTable />} /> {/* Tabelul de utilizatori */}
+        <Route path='tasks' element={<TaskTable />} /> {/* Tabelul de sarcini */}
       </Route>
     </Routes>
   );

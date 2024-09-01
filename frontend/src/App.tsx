@@ -6,6 +6,7 @@ import './App.css';
 import TaskTable from 'components/TaskTable';
 import theme from 'components/theme';
 
+import SimpleMap from './components/SimpleMap';
 import UserTable from './components/UserTable'; // Importă UserTable
 import AppRoutes from './routes'; // Importă rutele
 

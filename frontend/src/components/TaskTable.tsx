@@ -1,4 +1,5 @@
 import {
+  Container,
   Table,
   TableBody,
   TableCell,
@@ -8,18 +9,27 @@ import {
   Paper,
   Button,
   TextField,
-  Container,
 } from '@mui/material';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+
+import SimpleMap from './SimpleMap';
+
+interface Task {
+  id: number;
+  titlu: string;
+  continut: string;
+  deadline: string;
+  coordonate?: {
+    lat: number;
+    lng: number;
+  };
+}
 
 const TaskTable: React.FC = () => {
-  const [tasks, setTasks] = useState<any[]>([]);
-  const [userId, setUserId] = useState<number | ''>('');
-  const [assignedTo, setAssignedTo] = useState('');
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [titlu, setTitlu] = useState('');
   const [continut, setContinut] = useState('');
   const [deadline, setDeadline] = useState('');
-  const [coordonate, setCoordonate] = useState('');
   const [taskId, setTaskId] = useState<number | ''>('');
 
   useEffect(() => {
@@ -43,25 +53,24 @@ const TaskTable: React.FC = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          user_id: userId,
-          assigned_to: assignedTo,
           titlu,
           continut,
           deadline,
-          coordonate,
         }),
       });
-      fetchTasks(); // Refresh the task list
+      fetchTasks(); // Reîncarcă lista de sarcini
+      setTitlu('');
+      setContinut('');
+      setDeadline('');
     } catch (error) {
       console.error('Error creating task:', error);
     }
   };
 
-  const handleDeleteTask = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const handleDeleteTask = async (id: number) => {
     try {
-      await fetch(`http://localhost:3001/tasks/${taskId}`, { method: 'DELETE' });
-      fetchTasks(); // Refresh the task list
+      await fetch(`http://localhost:3001/tasks/${id}`, { method: 'DELETE' });
+      fetchTasks(); // Reîncarcă lista de sarcini
     } catch (error) {
       console.error('Error deleting task:', error);
     }
@@ -69,48 +78,39 @@ const TaskTable: React.FC = () => {
 
   const handleUpdateTask = async (event: React.FormEvent) => {
     event.preventDefault();
-    try {
-      await fetch(`http://localhost:3001/tasks/${taskId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          assignedTo,
-          titlu,
-          continut,
-          deadline,
-          coordonate,
-        }),
-      });
-      fetchTasks(); // Refresh the task list
-    } catch (error) {
-      console.error('Error updating task:', error);
+    if (taskId) {
+      try {
+        await fetch(`http://localhost:3001/tasks/${taskId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            titlu,
+            continut,
+            deadline,
+          }),
+        });
+        fetchTasks(); // Reîncarcă lista de sarcini
+        setTaskId('');
+        setTitlu('');
+        setContinut('');
+        setDeadline('');
+      } catch (error) {
+        console.error('Error updating task:', error);
+      }
     }
   };
 
   return (
     <Container>
+      <SimpleMap tasks={tasks} />
       <form onSubmit={handleCreateTask} style={{ marginBottom: '1rem' }}>
-        <TextField
-          label='User ID'
-          type='number'
-          value={userId}
-          onChange={(e) => setUserId(Number(e.target.value))}
-          fullWidth
-          margin='normal'
-        />
-        <TextField
-          label='Assigned To'
-          value={assignedTo}
-          onChange={(e) => setAssignedTo(e.target.value)}
-          fullWidth
-          margin='normal'
-        />
         <TextField
           label='Titlu'
           value={titlu}
           onChange={(e) => setTitlu(e.target.value)}
           fullWidth
           margin='normal'
+          required
         />
         <TextField
           label='Continut'
@@ -118,6 +118,7 @@ const TaskTable: React.FC = () => {
           onChange={(e) => setContinut(e.target.value)}
           fullWidth
           margin='normal'
+          required
         />
         <TextField
           label='Deadline'
@@ -126,79 +127,55 @@ const TaskTable: React.FC = () => {
           onChange={(e) => setDeadline(e.target.value)}
           fullWidth
           margin='normal'
-        />
-        <TextField
-          label='Coordonate'
-          value={coordonate}
-          onChange={(e) => setCoordonate(e.target.value)}
-          fullWidth
-          margin='normal'
+          InputLabelProps={{
+            shrink: true,
+          }}
+          required
         />
         <Button type='submit' variant='contained' color='primary'>
           Create Task
         </Button>
       </form>
 
-      <form onSubmit={handleDeleteTask} style={{ marginBottom: '1rem' }}>
-        <TextField
-          label='Delete Task'
-          type='number'
-          value={taskId}
-          onChange={(e) => setTaskId(Number(e.target.value))}
-          fullWidth
-          margin='normal'
-        />
-        <Button type='submit' variant='contained' color='secondary'>
-          Delete Task
-        </Button>
-      </form>
-
       <form onSubmit={handleUpdateTask} style={{ marginBottom: '1rem' }}>
         <TextField
-          label='Update Task'
+          label='Update Task ID'
           type='number'
           value={taskId}
           onChange={(e) => setTaskId(Number(e.target.value))}
           fullWidth
           margin='normal'
+          required
         />
         <TextField
-          label='Assigned To'
-          value={assignedTo}
-          onChange={(e) => setAssignedTo(e.target.value)}
-          fullWidth
-          margin='normal'
-        />
-        <TextField
-          label='Titlu'
+          label='New Titlu'
           value={titlu}
           onChange={(e) => setTitlu(e.target.value)}
           fullWidth
           margin='normal'
+          required
         />
         <TextField
-          label='Continut'
+          label='New Continut'
           value={continut}
           onChange={(e) => setContinut(e.target.value)}
           fullWidth
           margin='normal'
+          required
         />
         <TextField
-          label='Deadline'
+          label='New Deadline'
           type='date'
           value={deadline}
           onChange={(e) => setDeadline(e.target.value)}
           fullWidth
           margin='normal'
+          InputLabelProps={{
+            shrink: true,
+          }}
+          required
         />
-        <TextField
-          label='Coordonate'
-          value={coordonate}
-          onChange={(e) => setCoordonate(e.target.value)}
-          fullWidth
-          margin='normal'
-        />
-        <Button type='submit' variant='contained' color='secondary'>
+        <Button type='submit' variant='contained' color='primary'>
           Update Task
         </Button>
       </form>
@@ -207,25 +184,40 @@ const TaskTable: React.FC = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>User ID</TableCell>
-              <TableCell>Assigned To</TableCell>
               <TableCell>Titlu</TableCell>
               <TableCell>Continut</TableCell>
               <TableCell>Deadline</TableCell>
-              <TableCell>Coordonate</TableCell>
+              <TableCell>Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {tasks.map((task) => (
               <TableRow key={task.id}>
-                <TableCell>{task.id}</TableCell>
-                <TableCell>{task.user_id}</TableCell>
-                <TableCell>{task.assigned_to}</TableCell>
                 <TableCell>{task.titlu}</TableCell>
                 <TableCell>{task.continut}</TableCell>
                 <TableCell>{task.deadline}</TableCell>
-                <TableCell>{task.coordonate}</TableCell>
+                <TableCell>
+                  <Button
+                    variant='contained'
+                    color='secondary'
+                    onClick={() => handleDeleteTask(task.id)}
+                  >
+                    Delete
+                  </Button>
+                  <Button
+                    variant='contained'
+                    color='primary'
+                    onClick={() => {
+                      setTaskId(task.id);
+                      setTitlu(task.titlu);
+                      setContinut(task.continut);
+                      setDeadline(task.deadline);
+                    }}
+                    style={{ marginLeft: '8px' }}
+                  >
+                    Update
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

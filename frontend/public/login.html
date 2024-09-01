@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ro">
   <head>
     <meta charset="UTF-8" />
@@ -116,7 +116,9 @@
         try {
           // Construiește URL-ul cu query parameters
           const response = await fetch(
-            `/login?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`,
+            `/login?username=${encodeURIComponent(username)}&password=${encodeURIComponent(
+              password,
+            )}`,
             {
               method: 'GET', // Folosește GET
               headers: {
